@@ -1,17 +1,4 @@
-# Fjord Token Staking
-
-### Prize Pool
-
-- Total Pool - $20,000
-- H/M -  $16,000
-- Low - $2,500
-- Community Judging - $1,500
-
-- Ends: August 27, 2024 Noon UTC
-
-- nSLOC: 662
-
-[//]: # (contest-details-open)
+# Fjord Token Staking & Auction
 
 ## About the Project
 
