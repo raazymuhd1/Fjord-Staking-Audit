@@ -18,6 +18,7 @@ check_valid_key:
 	fi
 
 .PHONY: init fmt build clean rebuild test test-unit test-integration test-fuzz test-invariant test-gas trace remappings coverage
+
 init: cmd-exists-forge
 	@find ./script/sh -type f -exec chmod u+x {} +
 	git submodule deinit --force .
@@ -77,3 +78,5 @@ deploy-token: cmd-exists-forge
 .PHONY: deploy-staking
 deploy-staking: cmd-exists-forge
 	@./script/sh/deploy-staking.sh $(c)
+
+install-deps:; forge install transmissions11/solmate@v7 --no-commit && forge install OpenZeppelin/openzeppelin-contracts@v4.9.2 --no-commit && forge install sablier-labs/v2-core@v1.0.2 --no-commit && forge install PaulRBerg/prb-math --no-commit && forge install foundry-rs/forge-std --no-commit

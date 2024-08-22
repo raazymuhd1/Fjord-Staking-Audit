@@ -51,7 +51,7 @@ contract FjordPoints is ERC20, ERC20Burnable, IFjordPoints {
     address public staking;
 
     /// @notice Duration of each epoch for points distribution
-    uint256 public constant EPOCH_DURATION = 1 weeks;
+    uint256 public constant EPOCH_DURATION = 1 weeks; // this will be less than block.timestamp if we compared it.
 
     /// @notice Timestamp of the last points distribution
     uint256 public lastDistribution;
@@ -118,7 +118,8 @@ contract FjordPoints is ERC20, ERC20Burnable, IFjordPoints {
     constructor() ERC20("BjordBoint", "BJB") {
         owner = msg.sender;
         lastDistribution = block.timestamp;
-        pointsPerEpoch = 100 ether;
+        // q: what if one user owned much more FJO token than others, and staked all of the token, is there any points left on each EPOCH ??
+        pointsPerEpoch = 100 ether; // points per epoch is 100e18 (1 epoch = 1 weeks)
     }
 
     /**
@@ -145,6 +146,8 @@ contract FjordPoints is ERC20, ERC20Burnable, IFjordPoints {
      */
     modifier updatePendingPoints(address user) {
         UserInfo storage userInfo = users[user];
+        // @audit-info where is checks for user staked amount ???
+        // (100 * (4 - 2)) / 1e18 = 200 / (stakeAmount * (pointsPerToken - lastPointsPerToken)) / precision
         uint256 owed = userInfo.stakedAmount.mul(pointsPerToken.sub(userInfo.lastPointsPerToken))
             .div(PRECISION_18);
         userInfo.pendingPoints = userInfo.pendingPoints.add(owed);
@@ -182,6 +185,7 @@ contract FjordPoints is ERC20, ERC20Burnable, IFjordPoints {
      * @param _points The amount of points to be distributed per epoch.
      */
     function setPointsPerEpoch(uint256 _points) external onlyOwner checkDistribution {
+        // @audit-info revert statement could be more clear, adds a revert message onto it.
         if (_points == 0) {
             revert();
         }
@@ -238,9 +242,11 @@ contract FjordPoints is ERC20, ERC20Burnable, IFjordPoints {
             return;
         }
 
+        // wouldn't be this operation overflowed ??
         uint256 weeksPending = (block.timestamp - lastDistribution) / EPOCH_DURATION;
-        pointsPerToken =
-            pointsPerToken.add(weeksPending * (pointsPerEpoch.mul(PRECISION_18).div(totalStaked)));
+        // weeksPending * ((pointsPerEpoch * 1e18) / totalStaked)
+        pointsPerToken =pointsPerToken.add(weeksPending * (pointsPerEpoch.mul(PRECISION_18).div(totalStaked)));
+        // is this calculation correct ??
         totalPoints = totalPoints.add(pointsPerEpoch * weeksPending);
         lastDistribution = lastDistribution + (weeksPending * 1 weeks);
 

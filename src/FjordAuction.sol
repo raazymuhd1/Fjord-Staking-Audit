@@ -131,6 +131,7 @@ contract FjordAuction {
         }
         fjordPoints = ERC20Burnable(_fjordPoints);
         auctionToken = IERC20(_auctionToken);
+        // q: is this contract owner should be the same as the AuctionFactory owner ??
         owner = msg.sender;
         auctionEndTime = block.timestamp.add(_biddingTime);
         totalTokens = _totalTokens;
@@ -141,6 +142,7 @@ contract FjordAuction {
      * @param amount The amount of FjordPoints to bid.
      */
     function bid(uint256 amount) external {
+        // no zero amount checks
         if (block.timestamp > auctionEndTime) {
             revert AuctionAlreadyEnded();
         }
@@ -178,6 +180,8 @@ contract FjordAuction {
     /**
      * @notice Ends the auction and calculates claimable tokens for each bidder based on their bid proportion.
      */
+    // q: anyone is allowed to end the auction ??
+    // q: can we modified the block.timestamp ??
     function auctionEnd() external {
         if (block.timestamp < auctionEndTime) {
             revert AuctionNotYetEnded();
@@ -194,7 +198,9 @@ contract FjordAuction {
             return;
         }
 
-        multiplier = totalTokens.mul(PRECISION_18).div(totalBids);
+        // q: is this multiplier supposed to multiply against totalBids ??
+        // q: isn't this supposed to divided by `bids` mapping, which the user amount of fjordpoints?? 
+        multiplier = totalTokens.mul(PRECISION_18).div(totalBids); // (1000_000_000 * 1e18) / 1000_000e18;
 
         // Burn the FjordPoints held by the contract
         uint256 pointsToBurn = fjordPoints.balanceOf(address(this));

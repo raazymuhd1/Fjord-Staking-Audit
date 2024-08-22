@@ -28,6 +28,20 @@ via_ir = true
 max_test_rejects = 1
 runs = 500
 
+remappings = [
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+    "@prb/math/=lib/prb-math/",
+    "@sablier/v2-core/=lib/v2-core/",
+    "ds-test/=lib/forge-std/lib/ds-test/src/",
+    "erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/",
+    "forge-std/=lib/forge-std/src/",
+    "openzeppelin-contracts/=lib/openzeppelin-contracts/",
+    "prb-math/=lib/prb-math/src/",
+    "solmate/=lib/solmate/src/",
+    "v2-core/=lib/v2-core/src/",
+]
+
+
 [rpc_endpoints]
 localhost = "${LOCAL_RPC}"
 sepolia = "${SEPOLIA_RPC}"

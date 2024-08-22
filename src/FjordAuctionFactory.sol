@@ -25,6 +25,7 @@ contract AuctionFactory {
         if (_fjordPoints == address(0)) revert InvalidAddress();
 
         fjordPoints = _fjordPoints;
+        // q: can this be exploited ??
         owner = msg.sender;
     }
 
@@ -38,6 +39,7 @@ contract AuctionFactory {
         _;
     }
 
+    // no natspec!!
     function setOwner(address _newOwner) external onlyOwner {
         if (_newOwner == address(0)) revert InvalidAddress();
         owner = _newOwner;
@@ -55,6 +57,9 @@ contract AuctionFactory {
         uint256 totalTokens,
         bytes32 salt
     ) external onlyOwner {
+        // missing zero token address checks
+        // q: can we exploit this by deploying multiple contract with the same address, and use it for our advantage later ??
+        // q: is there any other contract that granted access for auction contract ??
         address auctionAddress = address(
             new FjordAuction{ salt: salt }(fjordPoints, auctionToken, biddingTime, totalTokens)
         );
